@@ -3,6 +3,7 @@
 
 #include "../header/socket.h"
 #include "../header/packet.h"
+#include "../header/parser.h"
 
 
 #define BUFFER_SIZE 65536
@@ -36,7 +37,7 @@ int main()
 
 
     print_packet(buffer, packet_size);
-
+    parse_packet(buffer, packet_size);
 
     close(socket_r);
 

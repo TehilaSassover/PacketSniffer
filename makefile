@@ -6,7 +6,9 @@ TARGET = packet_sniffer
 
 SRC = main.c \
       source/packet.c \
-      source/socket.c
+      source/socket.c \
+      source/parser.c \
+      source/layer_2/ethernet.c
 
 all: $(TARGET)
 

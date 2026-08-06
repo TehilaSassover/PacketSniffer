@@ -5,9 +5,7 @@
 #include "../header/packet.h"
 #include "../header/parser.h"
 
-
 #define BUFFER_SIZE 65536
-
 
 int main()
 {
@@ -18,16 +16,12 @@ int main()
         return 1;
     }
 
-
     unsigned char buffer[BUFFER_SIZE];
-
 
     int packet_size = get_packet(
         socket_r,
         buffer,
-        BUFFER_SIZE
-    );
-
+        BUFFER_SIZE);
 
     if (packet_size == -1)
     {
@@ -35,9 +29,11 @@ int main()
         return 1;
     }
 
-
-    print_packet(buffer, packet_size);
-    parse_packet(buffer, packet_size);
+    if (!parse_packet(buffer, packet_size))
+    {
+        close(socket_r);
+        return 1;
+    }
 
     close(socket_r);
 

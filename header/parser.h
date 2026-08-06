@@ -1,6 +1,13 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-void parse_packet(const unsigned char *buffer, int packet_size);
+#include <stdbool.h>
+#include <stddef.h>
+#include <stdint.h>
+
+bool parse_packet(
+    const uint8_t *buffer,
+    size_t packet_size
+);
 
 #endif

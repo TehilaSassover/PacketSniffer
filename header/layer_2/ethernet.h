@@ -2,6 +2,7 @@
 #define ETHERNET_H
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 #define MAC_ADDRESS_SIZE 6
@@ -17,9 +18,26 @@
 #define ETHERTYPE_IPV6 0x86DD
 #define ETHERTYPE_VLAN 0x8100
 
+
+typedef struct ethernet_header
+{
+    uint8_t destination_mac[MAC_ADDRESS_SIZE];
+    uint8_t source_mac[MAC_ADDRESS_SIZE];
+
+    uint16_t ether_type;
+
+} ethernet_header_t;
+
+
 bool parse_ethernet(
-    const unsigned char *buffer,
-    int packet_size
+    const uint8_t *buffer,
+    size_t packet_size,
+    ethernet_header_t *header
+);
+
+
+void print_ethernet(
+    const ethernet_header_t *header
 );
 
 #endif

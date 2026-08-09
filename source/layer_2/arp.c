@@ -2,6 +2,7 @@
 
 #include "layer_2/arp.h"
 #include "utils.h"
+#include "layer_2/ethernet.h"
 
 static const char *get_arp_hardware_type_name(
     uint16_t hardware_type)
@@ -21,7 +22,7 @@ static const char *get_arp_protocol_type_name(
 {
     switch (protocol_type)
     {
-    case ARP_PROTOCOL_TYPE_IPV4:
+    case ETHERTYPE_IPV4:
         return "IPv4";
 
     default:
@@ -66,7 +67,7 @@ static void print_arp_protocol_address(
     const arp_header_t *header,
     const uint8_t *address)
 {
-    if (header->protocol_type == ARP_PROTOCOL_TYPE_IPV4 &&
+    if (header->protocol_type == ETHERTYPE_IPV4 &&
         header->protocol_address_length == IPV4_ADDRESS_SIZE)
     {
         print_ipv4(address);

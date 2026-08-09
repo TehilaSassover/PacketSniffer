@@ -3,8 +3,9 @@
 #include "parser.h"
 #include "layer_2/ethernet.h"
 #include "layer_2/arp.h"
+#include "layer_2/vlan.h"
 
-static bool dispatch_payload(
+static bool dispatch_protocol(
     uint16_t ether_type,
     const uint8_t *payload,
     size_t payload_size)
@@ -38,8 +39,31 @@ static bool dispatch_payload(
         return true;
 
     case ETHERTYPE_VLAN:
-        printf("VLAN parsing is not implemented yet\n");
-        return true;
+    {
+        vlan_header_t vlan_header;
+
+        if (!parse_vlan(
+                payload,
+                payload_size,
+                &vlan_header))
+        {
+            printf("Failed to parse VLAN packet\n");
+            return false;
+        }
+
+        print_vlan(&vlan_header);
+
+        const uint8_t *inner_payload =
+            payload + VLAN_HEADER_SIZE;
+
+        size_t inner_payload_size =
+            payload_size - VLAN_HEADER_SIZE;
+
+        return dispatch_protocol(
+            vlan_header.inner_ether_type,
+            inner_payload,
+            inner_payload_size);
+    }
 
     default:
         printf(
@@ -73,7 +97,7 @@ bool parse_packet(
     size_t payload_size =
         packet_size - ETHERNET_II_HEADER_SIZE;
 
-    return dispatch_payload(
+    return dispatch_protocol(
         ethernet_header.ether_type,
         payload,
         payload_size);

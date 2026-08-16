@@ -4,6 +4,8 @@
 #include "layer_2/ethernet.h"
 #include "layer_2/arp.h"
 #include "layer_2/vlan.h"
+#include "layer_3/ipv4.h"
+#include "layer_3/ipv6.h"
 
 static bool dispatch_protocol(
     uint16_t ether_type,
@@ -31,12 +33,40 @@ static bool dispatch_protocol(
     }
 
     case ETHERTYPE_IPV4:
-        printf("IPv4 parsing is not implemented yet\n");
+    {
+        ipv4_header_t ipv4_header;
+
+        if (!parse_ipv4(
+                payload,
+                payload_size,
+                &ipv4_header))
+        {
+            printf("Failed to parse IPv4 packet\n");
+            return false;
+        }
+
+        print_ipv4_header(&ipv4_header);
+
         return true;
+    }
 
     case ETHERTYPE_IPV6:
-        printf("IPv6 parsing is not implemented yet\n");
+    {
+        ipv6_header_t ipv6_header;
+
+        if (!parse_ipv6(
+                payload,
+                payload_size,
+                &ipv6_header))
+        {
+            printf("Failed to parse IPv6 packet\n");
+            return false;
+        }
+
+        print_ipv6_header(&ipv6_header);
+
         return true;
+    }
 
     case ETHERTYPE_VLAN:
     {

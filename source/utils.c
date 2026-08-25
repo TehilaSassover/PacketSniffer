@@ -36,6 +36,15 @@ uint16_t read_uint16_be(const uint8_t *buffer)
     return ntohs(value);
 }
 
+uint32_t read_uint32_be(const uint8_t *buffer)
+{
+    uint32_t value;
+
+    memcpy(&value, buffer, sizeof(value));
+
+    return ntohl(value);
+}
+
 void print_bytes_hex(
     const uint8_t *buffer,
     size_t length)

@@ -8,13 +8,15 @@ TEST_TARGET = test_packet
 SRC = main.c \
       $(wildcard source/*.c) \
       $(wildcard source/layer_2/*.c) \
-      $(wildcard source/layer_3/*.c)
+      $(wildcard source/layer_3/*.c) \
+      $(wildcard source/layer_4/*.c)
 
 TEST_SRC = test_packet.c \
            source/parser.c \
            source/utils.c \
            $(wildcard source/layer_2/*.c) \
-           $(wildcard source/layer_3/*.c)
+           $(wildcard source/layer_3/*.c) \
+           $(wildcard source/layer_4/*.c)
 
 all: $(TARGET)
 

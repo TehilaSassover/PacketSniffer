@@ -11,14 +11,19 @@
 #include "layer_3/ipv6.h"
 #include "layer_3/icmp.h"
 #include "layer_3/icmpv6.h"
-#include "layer_4/tcp.h" /* 1. הוספת Include ל-TCP */
+#include "layer_4/tcp.h"
+#include "layer_4/udp.h" /* 1. הוספת Include ל-UDP */
 
 #ifndef IPPROTO_ICMP
 #define IPPROTO_ICMP 1
 #endif
 
 #ifndef IPPROTO_TCP
-#define IPPROTO_TCP 6 /* הוספת הגדרה ל-TCP Protocol ID */
+#define IPPROTO_TCP 6
+#endif
+
+#ifndef IPPROTO_UDP
+#define IPPROTO_UDP 17   /* 2. הגדרת Protocol ID עבור UDP */
 #endif
 
 #ifndef IPPROTO_ICMPV6
@@ -84,7 +89,6 @@ static bool dispatch_protocol(
 
                 print_icmp(&icmp_header);
             }
-            /* 2. תמיכה ב-TCP מעל IPv4 */
             else if (ipv4_header.protocol == IPPROTO_TCP)
             {
                 tcp_header_t tcp_header;
@@ -96,6 +100,19 @@ static bool dispatch_protocol(
                 }
 
                 print_tcp(&tcp_header);
+            }
+            /* 3. תמיכה ב-UDP מעל IPv4 */
+            else if (ipv4_header.protocol == IPPROTO_UDP)
+            {
+                udp_header_t udp_header;
+
+                if (!parse_udp(l4_payload, l4_payload_size, &udp_header))
+                {
+                    printf("Failed to parse UDP packet\n");
+                    return false;
+                }
+
+                print_udp(&udp_header);
             }
         }
 
@@ -136,7 +153,6 @@ static bool dispatch_protocol(
 
                 print_icmpv6(&icmpv6_header);
             }
-            /* 3. תמיכה ב-TCP מעל IPv6 */
             else if (ipv6_header.next_header == IPPROTO_TCP)
             {
                 tcp_header_t tcp_header;
@@ -148,6 +164,19 @@ static bool dispatch_protocol(
                 }
 
                 print_tcp(&tcp_header);
+            }
+            /* 4. תמיכה ב-UDP מעל IPv6 */
+            else if (ipv6_header.next_header == IPPROTO_UDP)
+            {
+                udp_header_t udp_header;
+
+                if (!parse_udp(l4_payload, l4_payload_size, &udp_header))
+                {
+                    printf("Failed to parse UDP packet\n");
+                    return false;
+                }
+
+                print_udp(&udp_header);
             }
         }
 

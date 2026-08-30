@@ -146,54 +146,55 @@ int main(void)
     //     0x00, 0x01, /* Identifier = 1 */
     //     0x00, 0x01  /* Sequence Number = 1 */
     // };
-    const uint8_t tcp_packet[] = {
+    // const uint8_t tcp_packet[] = {
+    //     /* Layer 2: Ethernet Header (14 bytes) */
+    //     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, /* Dst MAC */
+    //     0x00, 0x15, 0x5D, 0xC3, 0x5C, 0xD4, /* Src MAC */
+    //     0x08, 0x00,                         /* EtherType: IPv4 */
+
+    //     /* Layer 3: IPv4 Header (20 bytes) */
+    //     0x45, 0x00, 0x00, 0x28, /* Version=4, IHL=5, Total Length=40 */
+    //     0x00, 0x01, 0x00, 0x00, /* Identification=1, Flags/Offset=0 */
+    //     0x40, 0x06,             /* TTL=64, Protocol=TCP (6) */
+    //     0x00, 0x00,             /* Checksum */
+    //     0xC0, 0xA8, 0x01, 0x0A, /* Src IP: 192.168.1.10 */
+    //     0xC0, 0xA8, 0x01, 0x01, /* Dst IP: 192.168.1.1 */
+
+    //     /* Layer 4: TCP Header (20 bytes) */
+    //     0xC0, 0x00,             /* Src Port: 49152 */
+    //     0x00, 0x50,             /* Dst Port: 80 */
+    //     0x00, 0x00, 0x00, 0x01, /* Seq: 1 */
+    //     0x00, 0x00, 0x00, 0x00, /* Ack: 0 */
+    //     0x50,                   /* Data Offset: 5 (5*4 = 20 bytes) */
+    //     0x02,                   /* Flags: SYN (0x02) */
+    //     0xFA, 0x00,             /* Window Size: 64000 */
+    //     0x12, 0x34,             /* Checksum */
+    //     0x00, 0x00              /* Urgent Pointer */
+    // };
+
+    const uint8_t udp_packet[] = {
         /* Layer 2: Ethernet Header (14 bytes) */
         0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, /* Dst MAC */
         0x00, 0x15, 0x5D, 0xC3, 0x5C, 0xD4, /* Src MAC */
         0x08, 0x00,                         /* EtherType: IPv4 */
 
         /* Layer 3: IPv4 Header (20 bytes) */
-        0x45, 0x00, 0x00, 0x28, /* Version=4, IHL=5, Total Length=40 */
+        0x45, 0x00, 0x00, 0x20, /* Version=4, IHL=5, Total Length=32 */
         0x00, 0x01, 0x00, 0x00, /* Identification=1, Flags/Offset=0 */
-        0x40, 0x06,             /* TTL=64, Protocol=TCP (6) */
+        0x40, 0x11,             /* TTL=64, Protocol=UDP (17 / 0x11) */
         0x00, 0x00,             /* Checksum */
         0xC0, 0xA8, 0x01, 0x0A, /* Src IP: 192.168.1.10 */
         0xC0, 0xA8, 0x01, 0x01, /* Dst IP: 192.168.1.1 */
 
-        /* Layer 4: TCP Header (20 bytes) */
-        0xC0, 0x00,             /* Src Port: 49152 */
-        0x00, 0x50,             /* Dst Port: 80 */
-        0x00, 0x00, 0x00, 0x01, /* Seq: 1 */
-        0x00, 0x00, 0x00, 0x00, /* Ack: 0 */
-        0x50,                   /* Data Offset: 5 (5*4 = 20 bytes) */
-        0x02,                   /* Flags: SYN (0x02) */
-        0xFA, 0x00,             /* Window Size: 64000 */
-        0x12, 0x34,             /* Checksum */
-        0x00, 0x00              /* Urgent Pointer */
-    };
+        /* Layer 4: UDP Header (8 bytes) */
+        0x1F, 0x90, /* Src Port: 8080 */
+        0x00, 0x35, /* Dst Port: 53 (DNS) */
+        0x00, 0x0C, /* Length: 12 bytes (8 header + 4 payload) */
+        0x00, 0x00, /* Checksum */
 
-    // const uint8_t udp_packet[] = {
-    //     /* Ethernet Header (14 bytes) */
-    //     0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
-    //     0x00, 0x15, 0x5D, 0xC3, 0x5C, 0xD4,
-    //     0x08, 0x00, /* EtherType = IPv4 */
-
-    //     /* IPv4 Header (20 bytes) */
-    //     0x45, 0x00, 0x00, 0x1C,
-    //     0x00, 0x01, 0x00, 0x00,
-    //     0x40, 0x11, /* Protocol = UDP (17) */
-    //     0x00, 0x00,
-    //     0xC0, 0xA8, 0x01, 0x0A, /* Src IP: 192.168.1.10 */
-    //     0xC0, 0xA8, 0x01, 0x01, /* Dst IP: 192.168.1.1 */
-
-    //     /* UDP Header (8 bytes) */
-    //     0xD3, 0xAD, /* Src Port: 54189 (0xD3AD) */
-    //     0x00, 0x35, /* Dst Port: 53 / DNS (0x0035) */
-    //     0x00, 0x08, /* Length: 8 bytes */
-    //     0x12, 0x34  /* Checksum: 0x1234 */
-    // };
-
-    parse_packet(tcp_packet, sizeof(tcp_packet));
+        /* Payload (4 bytes) */
+        'T', 'E', 'S', 'T'};
+    parse_packet(udp_packet, sizeof(udp_packet));
 
     return 0;
 }

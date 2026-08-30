@@ -24,7 +24,7 @@ bool parse_ipv4(
         (version_ihl >> 4) & 0x0F;
 
     header->header_length =
-        version_ihl & 0x0F;
+        (version_ihl & 0x0F) * 4;
 
     header->dscp =
         (dscp_ecn >> 2) & 0x3F;
@@ -102,7 +102,7 @@ void print_ipv4_header(
     printf("Protocol          : IPv4\n");
     printf("Version           : %u\n", header->version);
     printf("Header Length     : %u bytes\n",
-           header->header_length * 4);
+           header->header_length);
     printf("DSCP              : %u\n", header->dscp);
     printf("ECN               : %u\n", header->ecn);
     printf("Total Length      : %u\n", header->total_length);

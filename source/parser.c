@@ -6,6 +6,16 @@
 #include "layer_2/vlan.h"
 #include "layer_3/ipv4.h"
 #include "layer_3/ipv6.h"
+#include "layer_3/icmp.h"
+#include "layer_3/icmpv6.h"
+
+#ifndef IPPROTO_ICMP
+#define IPPROTO_ICMP 1
+#endif
+
+#ifndef IPPROTO_ICMPV6
+#define IPPROTO_ICMPV6 58
+#endif
 
 static bool dispatch_protocol(
     uint16_t ether_type,
@@ -47,6 +57,27 @@ static bool dispatch_protocol(
 
         print_ipv4_header(&ipv4_header);
 
+        size_t ip_header_bytes = ipv4_header.header_length;
+
+        if (payload_size > ip_header_bytes)
+        {
+            const uint8_t *l4_payload = payload + ip_header_bytes;
+            size_t l4_payload_size = payload_size - ip_header_bytes;
+
+            if (ipv4_header.protocol == IPPROTO_ICMP)
+            {
+                icmp_header_t icmp_header;
+
+                if (!parse_icmp(l4_payload, l4_payload_size, &icmp_header))
+                {
+                    printf("Failed to parse ICMP packet\n");
+                    return false;
+                }
+
+                print_icmp(&icmp_header);
+            }
+        }
+
         return true;
     }
 
@@ -64,6 +95,27 @@ static bool dispatch_protocol(
         }
 
         print_ipv6_header(&ipv6_header);
+
+        size_t ipv6_header_bytes = 40; // IPv6 header fixed size
+
+        if (payload_size > ipv6_header_bytes)
+        {
+            const uint8_t *l4_payload = payload + ipv6_header_bytes;
+            size_t l4_payload_size = payload_size - ipv6_header_bytes;
+
+            if (ipv6_header.next_header == IPPROTO_ICMPV6)
+            {
+                icmpv6_header_t icmpv6_header;
+
+                if (!parse_icmpv6(l4_payload, l4_payload_size, &icmpv6_header))
+                {
+                    printf("Failed to parse ICMPv6 packet\n");
+                    return false;
+                }
+
+                print_icmpv6(&icmpv6_header);
+            }
+        }
 
         return true;
     }

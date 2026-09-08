@@ -14,13 +14,25 @@ bool parse_udp(const uint8_t *buffer, size_t packet_size, udp_header_t *header)
 
     memcpy(&raw_src_port, buffer + 0, sizeof(raw_src_port));
     memcpy(&raw_dst_port, buffer + 2, sizeof(raw_dst_port));
-    memcpy(&raw_length,   buffer + 4, sizeof(raw_length));
+    memcpy(&raw_length, buffer + 4, sizeof(raw_length));
     memcpy(&raw_checksum, buffer + 6, sizeof(raw_checksum));
 
     header->src_port = ntohs(raw_src_port);
     header->dst_port = ntohs(raw_dst_port);
-    header->length   = ntohs(raw_length);
+    header->length = ntohs(raw_length);
     header->checksum = ntohs(raw_checksum);
+
+    if (header->length < UDP_HEADER_SIZE)
+    {
+        printf("Error: Invalid UDP Length field (%u bytes)\n", header->length);
+        return false;
+    }
+
+    if (packet_size < header->length)
+    {
+        printf("Error: Truncated UDP Payload (%zu bytes available, %u required)\n", packet_size, header->length);
+        return false;
+    }
 
     return true;
 }

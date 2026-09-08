@@ -3,9 +3,9 @@
 #include "layer_2/arp.h"
 #include "utils.h"
 #include "layer_2/ethernet.h"
+#include "layer_3/ipv4.h"
 
-static const char *get_arp_hardware_type_name(
-    uint16_t hardware_type)
+static const char *get_arp_hardware_type_name(uint16_t hardware_type)
 {
     switch (hardware_type)
     {
@@ -17,8 +17,7 @@ static const char *get_arp_hardware_type_name(
     }
 }
 
-static const char *get_arp_protocol_type_name(
-    uint16_t protocol_type)
+static const char *get_arp_protocol_type_name(uint16_t protocol_type)
 {
     switch (protocol_type)
     {
@@ -30,8 +29,7 @@ static const char *get_arp_protocol_type_name(
     }
 }
 
-static const char *get_arp_operation_name(
-    uint16_t operation)
+static const char *get_arp_operation_name(uint16_t operation)
 {
     switch (operation)
     {

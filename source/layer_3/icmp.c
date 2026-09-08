@@ -3,28 +3,26 @@
 #include <arpa/inet.h>
 #include "layer_3/icmp.h"
 
-bool parse_icmp(const uint8_t *buffer, size_t packet_size, icmp_header_t *header)
+bool parse_icmp(
+    const uint8_t *buffer,
+    size_t packet_size,
+    icmp_header_t *header)
 {
     if (buffer == NULL || header == NULL || packet_size < ICMP_HEADER_MIN_SIZE)
     {
         return false;
     }
-
     header->type = buffer[0];
     header->code = buffer[1];
-
     uint16_t raw_checksum;
     memcpy(&raw_checksum, buffer + 2, sizeof(raw_checksum));
     header->checksum = ntohs(raw_checksum);
-
     uint16_t raw_rest1;
     uint16_t raw_rest2;
     memcpy(&raw_rest1, buffer + 4, sizeof(raw_rest1));
     memcpy(&raw_rest2, buffer + 6, sizeof(raw_rest2));
-
     header->rest_of_header_1 = ntohs(raw_rest1);
     header->rest_of_header_2 = ntohs(raw_rest2);
-
     return true;
 }
 
@@ -34,12 +32,10 @@ void print_icmp(const icmp_header_t *header)
     {
         return;
     }
-
     printf("Layer 3 / 4\n");
     printf("--------\n");
-    printf("Protocol        : ICMP\n");
-    printf("Type            : %u ", header->type);
-
+    printf("Protocol         : ICMP\n");
+    printf("Type             : %u ", header->type);
     switch (header->type)
     {
     case ICMP_TYPE_ECHO_REPLY:
@@ -61,17 +57,15 @@ void print_icmp(const icmp_header_t *header)
         printf("(Other/Unassigned)\n");
         break;
     }
-
-    printf("Code            : %u\n", header->code);
-    printf("Checksum        : 0x%04X\n", header->checksum);
-
+    printf("Code             : %u\n", header->code);
+    printf("Checksum         : 0x%04X\n", header->checksum);
     if (header->type == ICMP_TYPE_ECHO_REQUEST || header->type == ICMP_TYPE_ECHO_REPLY)
     {
-        printf("Identifier      : %u (0x%04X)\n", header->rest_of_header_1, header->rest_of_header_1);
-        printf("Sequence Number : %u (0x%04X)\n", header->rest_of_header_2, header->rest_of_header_2);
+        printf("Identifier       : %u (0x%04X)\n", header->rest_of_header_1, header->rest_of_header_1);
+        printf("Sequence Number  : %u (0x%04X)\n", header->rest_of_header_2, header->rest_of_header_2);
     }
     else
     {
-        printf("Rest of Header  : 0x%04X%04X\n", header->rest_of_header_1, header->rest_of_header_2);
+        printf("Rest of Header   : 0x%04X%04X\n", header->rest_of_header_1, header->rest_of_header_2);
     }
 }
